@@ -94,6 +94,14 @@ struct ToolbarButtons: View {
             .foregroundColor(appState.logProcessor.autoScroll ? .accentColor : .secondary)
             .help("Auto-scroll \(appState.logProcessor.autoScroll ? "on" : "off")")
 
+            // Copy all logs
+            Button(action: { copyAllLogs() }) {
+                Image(systemName: "doc.on.doc")
+            }
+            .buttonStyle(.borderless)
+            .help("Copy all logs")
+            .disabled(appState.logProcessor.entries.isEmpty)
+
             // Clear logs
             Button(action: { appState.clearLogs() }) {
                 Image(systemName: "trash")
@@ -108,6 +116,15 @@ struct ToolbarButtons: View {
             .buttonStyle(.borderless)
             .help("Export logs")
         }
+    }
+
+    private func copyAllLogs() {
+        let allText = appState.logProcessor.filteredEntries
+            .map { $0.message }
+            .joined(separator: "\n")
+
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(allText, forType: .string)
     }
 }
 
@@ -141,74 +158,93 @@ struct LogListView: View {
     var body: some View {
         Group {
             if isEmpty {
-                // Empty state
                 EmptyLogView()
             } else {
-                // Log entries
-                logScrollView
+                SelectableLogTextView(
+                    entries: appState.logProcessor.filteredEntries,
+                    autoScroll: appState.logProcessor.autoScroll
+                )
             }
         }
         .frame(minHeight: 200)
         .background(Color(NSColor.textBackgroundColor))
     }
-
-    private var logScrollView: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 2) {
-                    ForEach(appState.logProcessor.filteredEntries) { entry in
-                        LogEntryRow(entry: entry)
-                            .id(entry.id)
-                    }
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-            }
-            .onChange(of: appState.logProcessor.entries.count) { _, _ in
-                if appState.logProcessor.autoScroll,
-                   let lastEntry = appState.logProcessor.filteredEntries.last {
-                    withAnimation(.easeOut(duration: 0.1)) {
-                        proxy.scrollTo(lastEntry.id, anchor: .bottom)
-                    }
-                }
-            }
-        }
-    }
 }
 
-// MARK: - Log Entry Row
+// MARK: - Selectable Log Text View (NSViewRepresentable)
 
-struct LogEntryRow: View {
-    let entry: LogEntry
-    @State private var isHovered = false
+struct SelectableLogTextView: NSViewRepresentable {
+    let entries: [LogEntry]
+    let autoScroll: Bool
 
-    var body: some View {
-        HStack(alignment: .top, spacing: 6) {
-            // Level indicator
-            Circle()
-                .fill(entry.level.color)
-                .frame(width: 6, height: 6)
-                .padding(.top, 5)
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSScrollView()
+        let textView = NSTextView()
 
-            // Message
-            Text(entry.message)
-                .font(.system(.caption, design: .monospaced))
-                .foregroundColor(entry.level == .error ? .red : .primary)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.vertical, 2)
-        .padding(.horizontal, 4)
-        .background(isHovered ? Color.gray.opacity(0.1) : Color.clear)
-        .cornerRadius(4)
-        .onHover { hovering in
-            isHovered = hovering
-        }
-        .contextMenu {
-            Button("Copy") {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(entry.message, forType: .string)
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.backgroundColor = NSColor.textBackgroundColor
+        textView.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        textView.textContainerInset = NSSize(width: 8, height: 8)
+        textView.autoresizingMask = [.width]
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.textContainer?.widthTracksTextView = true
+        textView.textContainer?.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+
+        scrollView.documentView = textView
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
+        scrollView.borderType = .noBorder
+
+        return scrollView
+    }
+
+    func updateNSView(_ scrollView: NSScrollView, context: Context) {
+        guard let textView = scrollView.documentView as? NSTextView else { return }
+
+        let attributedString = NSMutableAttributedString()
+
+        for (index, entry) in entries.enumerated() {
+            let color: NSColor
+            switch entry.level {
+            case .error:
+                color = NSColor.systemRed
+            case .warning:
+                color = NSColor.systemOrange
+            case .debug:
+                color = NSColor.systemGray
+            default:
+                color = NSColor.labelColor
             }
+
+            let levelIndicator = "● "
+            let levelAttr = NSAttributedString(
+                string: levelIndicator,
+                attributes: [
+                    .foregroundColor: color,
+                    .font: NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+                ]
+            )
+
+            let messageAttr = NSAttributedString(
+                string: entry.message + (index < entries.count - 1 ? "\n" : ""),
+                attributes: [
+                    .foregroundColor: entry.level == .error ? NSColor.systemRed : NSColor.labelColor,
+                    .font: NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+                ]
+            )
+
+            attributedString.append(levelAttr)
+            attributedString.append(messageAttr)
+        }
+
+        textView.textStorage?.setAttributedString(attributedString)
+
+        // Auto-scroll to bottom
+        if autoScroll && !entries.isEmpty {
+            textView.scrollToEndOfDocument(nil)
         }
     }
 }
