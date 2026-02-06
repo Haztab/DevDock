@@ -21,7 +21,8 @@
       "Bash(# Check for recent crash reports ls -lt ~/Library/Logs/DiagnosticReports/*DevDock*)",
       "Bash(/usr/libexec/java_home:*)",
       "Bash(sudo ln:*)",
-      "Bash(/Users/qushay/Library/Android/sdk/emulator/emulator -list-avds:*)"
+      "Bash(/Users/qushay/Library/Android/sdk/emulator/emulator -list-avds:*)",
+      "Bash(/Users/qushay/Project/DevDock/DevDock/Scripts/create-dmg.sh:*)"
     ]
   }
 }
