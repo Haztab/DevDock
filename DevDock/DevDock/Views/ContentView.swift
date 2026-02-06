@@ -61,21 +61,29 @@ struct ProjectHeader: View {
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.accentColor)
 
-                // Project name
-                VStack(alignment: .leading, spacing: 1) {
+                // Project name & info
+                VStack(alignment: .leading, spacing: 2) {
                     Text(appState.currentProject?.name ?? "Select Project")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.primary)
                         .lineLimit(1)
 
-                    // Status
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(statusColor)
-                            .frame(width: 6, height: 6)
-                        Text(appState.processState.statusText)
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
+                    // Tech stack & Status
+                    HStack(spacing: 6) {
+                        // Tech stack badge
+                        if let projectType = appState.currentProject?.type {
+                            TechStackBadge(type: projectType)
+                        }
+
+                        // Status
+                        HStack(spacing: 3) {
+                            Circle()
+                                .fill(statusColor)
+                                .frame(width: 5, height: 5)
+                            Text(appState.processState.statusText)
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
 
@@ -101,6 +109,79 @@ struct ProjectHeader: View {
         case .running: return .green
         case .stopping: return .orange
         case .failed: return .red
+        }
+    }
+}
+
+// MARK: - Tech Stack Badge
+
+struct TechStackBadge: View {
+    let type: ProjectType
+
+    var body: some View {
+        HStack(spacing: 4) {
+            // Framework/Platform
+            Text(type.rawValue)
+                .font(.system(size: 8, weight: .semibold))
+                .foregroundColor(badgeColor)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .background(badgeColor.opacity(0.15))
+                .cornerRadius(3)
+
+            // Language
+            Text(language)
+                .font(.system(size: 8, weight: .medium))
+                .foregroundColor(languageColor)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .background(languageColor.opacity(0.1))
+                .cornerRadius(3)
+        }
+    }
+
+    private var badgeColor: Color {
+        switch type {
+        case .flutter:
+            return .cyan
+        case .reactNative:
+            return .blue
+        case .ios:
+            return .orange
+        case .android:
+            return .green
+        case .unknown:
+            return .gray
+        }
+    }
+
+    private var language: String {
+        switch type {
+        case .flutter:
+            return "Dart"
+        case .reactNative:
+            return "JS/TS"
+        case .ios:
+            return "Swift"
+        case .android:
+            return "Kotlin/Java"
+        case .unknown:
+            return "?"
+        }
+    }
+
+    private var languageColor: Color {
+        switch type {
+        case .flutter:
+            return .teal
+        case .reactNative:
+            return .yellow
+        case .ios:
+            return .orange
+        case .android:
+            return .purple
+        case .unknown:
+            return .gray
         }
     }
 }

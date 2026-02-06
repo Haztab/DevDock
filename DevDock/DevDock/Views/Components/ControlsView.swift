@@ -300,12 +300,27 @@ struct ActionButtons: View {
     @EnvironmentObject var appState: AppState
     @State private var isUninstalling = false
 
+    private var isRunning: Bool {
+        appState.commandRunner.state.isRunning
+    }
+
+    /// Project supports hot reload (Flutter & React Native)
+    private var supportsHotReload: Bool {
+        guard let projectType = appState.currentProject?.type else { return false }
+        return projectType == .flutter || projectType == .reactNative
+    }
+
+    /// Hot reload enabled when running + supports it
+    private var canHotReload: Bool {
+        isRunning && supportsHotReload
+    }
+
     var body: some View {
         VStack(spacing: 6) {
             // Main action row
             HStack(spacing: 6) {
                 // Run/Stop button
-                if appState.commandRunner.state.isRunning {
+                if isRunning {
                     ActionButton(
                         title: "Stop",
                         icon: "stop.fill",
@@ -346,20 +361,44 @@ struct ActionButtons: View {
                 }
             }
 
-            // Hot reload buttons
-            if appState.canHotReload {
-                HStack(spacing: 6) {
-                    SmallButton(title: "Reload", icon: "flame") {
-                        Task { await appState.hotReload() }
+            // Hot reload buttons - visible for all, enabled for Flutter & React Native
+            HStack(spacing: 6) {
+                // Hot Reload button
+                Button(action: {
+                    Task { await appState.hotReload() }
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 10))
+                        Text("Hot Reload")
+                            .font(.system(size: 11, weight: .medium))
                     }
-                    SmallButton(title: "Restart", icon: "arrow.clockwise") {
-                        Task { await appState.hotRestart() }
-                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 5)
                 }
-                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                .buttonStyle(.borderedProminent)
+                .tint(supportsHotReload ? .orange : .gray)
+                .disabled(!canHotReload)
+
+                // Restart button
+                Button(action: {
+                    Task { await appState.hotRestart() }
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 10))
+                        Text("Restart")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 5)
+                }
+                .buttonStyle(.bordered)
+                .tint(supportsHotReload ? nil : .gray)
+                .disabled(!canHotReload)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: appState.canHotReload)
+        .animation(.easeInOut(duration: 0.2), value: isRunning)
     }
 }
 
