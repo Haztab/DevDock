@@ -1,0 +1,450 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DD000001 /* DevDockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100001; };
+		DD000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100002; };
+		DD000003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100003; };
+		DD000004 /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100004; };
+		DD000005 /* LogViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100005; };
+		DD000006 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100006; };
+		DD000007 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100007; };
+		DD000008 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100008; };
+		DD000009 /* LogProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100009; };
+		DD000010 /* ProjectDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100010; };
+		DD000011 /* ProjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100011; };
+		DD000012 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100012; };
+		DD000013 /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100013; };
+		DD000014 /* ProcessState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100014; };
+		DD000015 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100015; };
+		DD000016 /* View+KeyboardShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100016; };
+		DD000017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD100017; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		DD100001 /* DevDockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevDockApp.swift; sourceTree = "<group>"; };
+		DD100002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DD100003 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		DD100004 /* ControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsView.swift; sourceTree = "<group>"; };
+		DD100005 /* LogViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewerView.swift; sourceTree = "<group>"; };
+		DD100006 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		DD100007 /* CommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandRunner.swift; sourceTree = "<group>"; };
+		DD100008 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
+		DD100009 /* LogProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogProcessor.swift; sourceTree = "<group>"; };
+		DD100010 /* ProjectDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetector.swift; sourceTree = "<group>"; };
+		DD100011 /* ProjectType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectType.swift; sourceTree = "<group>"; };
+		DD100012 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		DD100013 /* LogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
+		DD100014 /* ProcessState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessState.swift; sourceTree = "<group>"; };
+		DD100015 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
+		DD100016 /* View+KeyboardShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+KeyboardShortcuts.swift"; sourceTree = "<group>"; };
+		DD100017 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DD100018 /* DevDock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DevDock.entitlements; sourceTree = "<group>"; };
+		DD200001 /* DevDock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevDock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DD300001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DD400001 = {
+			isa = PBXGroup;
+			children = (
+				DD400002 /* DevDock */,
+				DD400010 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DD400002 /* DevDock */ = {
+			isa = PBXGroup;
+			children = (
+				DD400003 /* App */,
+				DD400004 /* Models */,
+				DD400005 /* Services */,
+				DD400006 /* ViewModels */,
+				DD400007 /* Views */,
+				DD400009 /* Extensions */,
+				DD100017 /* Assets.xcassets */,
+				DD100018 /* DevDock.entitlements */,
+			);
+			path = DevDock;
+			sourceTree = "<group>";
+		};
+		DD400003 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				DD100001 /* DevDockApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		DD400004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				DD100011 /* ProjectType.swift */,
+				DD100012 /* Device.swift */,
+				DD100013 /* LogEntry.swift */,
+				DD100014 /* ProcessState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DD400005 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				DD100007 /* CommandRunner.swift */,
+				DD100008 /* DeviceManager.swift */,
+				DD100009 /* LogProcessor.swift */,
+				DD100010 /* ProjectDetector.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		DD400006 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				DD100006 /* AppState.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		DD400007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DD100002 /* ContentView.swift */,
+				DD100003 /* SettingsView.swift */,
+				DD400008 /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		DD400008 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				DD100004 /* ControlsView.swift */,
+				DD100005 /* LogViewerView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		DD400009 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DD100015 /* Color+Extensions.swift */,
+				DD100016 /* View+KeyboardShortcuts.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		DD400010 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DD200001 /* DevDock.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DD500001 /* DevDock */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD700001 /* Build configuration list for PBXNativeTarget "DevDock" */;
+			buildPhases = (
+				DD600001 /* Sources */,
+				DD300001 /* Frameworks */,
+				DD600002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DevDock;
+			productName = DevDock;
+			productReference = DD200001 /* DevDock.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DD800001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					DD500001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = DD700002 /* Build configuration list for PBXProject "DevDock" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DD400001;
+			productRefGroup = DD400010 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DD500001 /* DevDock */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DD600002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD000017 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DD600001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD000001 /* DevDockApp.swift in Sources */,
+				DD000002 /* ContentView.swift in Sources */,
+				DD000003 /* SettingsView.swift in Sources */,
+				DD000004 /* ControlsView.swift in Sources */,
+				DD000005 /* LogViewerView.swift in Sources */,
+				DD000006 /* AppState.swift in Sources */,
+				DD000007 /* CommandRunner.swift in Sources */,
+				DD000008 /* DeviceManager.swift in Sources */,
+				DD000009 /* LogProcessor.swift in Sources */,
+				DD000010 /* ProjectDetector.swift in Sources */,
+				DD000011 /* ProjectType.swift in Sources */,
+				DD000012 /* Device.swift in Sources */,
+				DD000013 /* LogEntry.swift in Sources */,
+				DD000014 /* ProcessState.swift in Sources */,
+				DD000015 /* Color+Extensions.swift in Sources */,
+				DD000016 /* View+KeyboardShortcuts.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		DD900001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		DD900002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		DD900003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DevDock/DevDock.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DevDock;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devdock.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		DD900004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DevDock/DevDock.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DevDock;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devdock.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DD700001 /* Build configuration list for PBXNativeTarget "DevDock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD900003 /* Debug */,
+				DD900004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD700002 /* Build configuration list for PBXProject "DevDock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD900001 /* Debug */,
+				DD900002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DD800001 /* Project object */;
+}

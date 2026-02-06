@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Bundle Configuration -->
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+
+	<key>CFBundlePackageType</key>
+	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+
+	<!-- Version Information -->
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+
+	<key>CFBundleVersion</key>
+	<string>1</string>
+
+	<!-- App Display Name -->
+	<key>CFBundleDisplayName</key>
+	<string>DevDock</string>
+
+	<!-- App Category -->
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.developer-tools</string>
+
+	<!-- Minimum System Version -->
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+
+	<!-- Principal Class -->
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+
+	<!-- High Resolution Capable -->
+	<key>NSHighResolutionCapable</key>
+	<true/>
+
+	<!-- Supports Automatic Graphics Switching -->
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
+
+	<!-- Copyright -->
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2026 DevDock. All rights reserved.</string>
+
+	<!-- Privacy - Required Descriptions -->
+	<key>NSAppleEventsUsageDescription</key>
+	<string>DevDock needs to run development tools like Flutter, React Native, and Android SDK commands.</string>
+
+	<!-- App Transport Security - Allow localhost for development servers -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+
+	<!-- Document Types (for opening project folders) -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.folder</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- URL Schemes (for future deep linking) -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.devdock.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>devdock</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Sparkle Updates (for future auto-update support) -->
+	<key>SUFeedURL</key>
+	<string>https://devdock.app/appcast.xml</string>
+
+	<key>SUPublicEDKey</key>
+	<string></string>
+
+	<!-- App Icon -->
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+</dict>
+</plist>
