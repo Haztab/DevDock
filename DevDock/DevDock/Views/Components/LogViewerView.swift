@@ -1,141 +1,149 @@
 import SwiftUI
 
-/// Real-time log viewer with filtering
+// MARK: - Log Viewer View
+
 struct LogViewerView: View {
     @EnvironmentObject var appState: AppState
     @State private var searchText = ""
+    @State private var selectedLevel: LogLevel = .all
 
     var body: some View {
         VStack(spacing: 0) {
-            // Log toolbar
-            LogToolbar(searchText: $searchText)
+            // Toolbar
+            LogToolbarView(
+                searchText: $searchText,
+                selectedLevel: $selectedLevel
+            )
 
             Divider()
 
-            // Log list
-            LogListView(searchText: searchText)
+            // Log content
+            LogContentView(searchText: searchText)
         }
     }
 }
 
 // MARK: - Log Toolbar
 
-struct LogToolbar: View {
+struct LogToolbarView: View {
     @EnvironmentObject var appState: AppState
     @Binding var searchText: String
-    @State private var selectedLevel: LogLevel = .all
+    @Binding var selectedLevel: LogLevel
 
     var body: some View {
         HStack(spacing: 8) {
-            // Filter picker
-            Picker("Level", selection: $selectedLevel) {
+            // Filter
+            Picker("", selection: $selectedLevel) {
                 ForEach(LogLevel.allCases) { level in
-                    Label(level.rawValue, systemImage: level.iconName)
-                        .tag(level)
+                    Text(level.rawValue).tag(level)
                 }
             }
             .labelsHidden()
-            .frame(width: 90)
+            .frame(width: 80)
             .onChange(of: selectedLevel) { _, newValue in
                 appState.logProcessor.filter.level = newValue
             }
 
-            // Search field
-            HStack {
+            // Search
+            HStack(spacing: 4) {
                 Image(systemName: "magnifyingglass")
+                    .font(.system(size: 11))
                     .foregroundColor(.secondary)
-                TextField("Search logs...", text: $searchText)
+
+                TextField("Search...", text: $searchText)
                     .textFieldStyle(.plain)
-                    .font(.caption)
+                    .font(.system(size: 11))
+
                 if !searchText.isEmpty {
                     Button(action: { searchText = "" }) {
                         Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 6)
+            .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(Color(NSColor.controlBackgroundColor))
             .cornerRadius(6)
+            .onChange(of: searchText) { _, newValue in
+                appState.logProcessor.filter.searchText = newValue
+            }
 
-            // Toolbar buttons
-            ToolbarButtons()
+            Spacer()
+
+            // Badges
+            HStack(spacing: 4) {
+                if appState.logProcessor.errorCount > 0 {
+                    CountBadge(count: appState.logProcessor.errorCount, color: .red)
+                }
+                if appState.logProcessor.warningCount > 0 {
+                    CountBadge(count: appState.logProcessor.warningCount, color: .orange)
+                }
+            }
+
+            // Actions
+            HStack(spacing: 2) {
+                ToolbarButton(
+                    icon: appState.logProcessor.autoScroll ? "arrow.down.to.line" : "arrow.down.to.line.compact",
+                    isActive: appState.logProcessor.autoScroll,
+                    help: "Auto-scroll"
+                ) {
+                    appState.logProcessor.autoScroll.toggle()
+                }
+
+                ToolbarButton(icon: "doc.on.doc", help: "Copy all") {
+                    copyAllLogs()
+                }
+
+                ToolbarButton(icon: "trash", help: "Clear") {
+                    appState.clearLogs()
+                }
+
+                ToolbarButton(icon: "square.and.arrow.up", help: "Export") {
+                    appState.exportLogs()
+                }
+            }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .onChange(of: searchText) { _, newValue in
-            appState.logProcessor.filter.searchText = newValue
-        }
-    }
-}
-
-struct ToolbarButtons: View {
-    @EnvironmentObject var appState: AppState
-
-    var body: some View {
-        HStack(spacing: 4) {
-            // Error/Warning counts
-            if appState.logProcessor.errorCount > 0 {
-                Badge(count: appState.logProcessor.errorCount, color: .red)
-            }
-            if appState.logProcessor.warningCount > 0 {
-                Badge(count: appState.logProcessor.warningCount, color: .orange)
-            }
-
-            // Auto-scroll toggle
-            Button(action: {
-                appState.logProcessor.autoScroll.toggle()
-            }) {
-                Image(systemName: appState.logProcessor.autoScroll ? "arrow.down.to.line" : "arrow.down.to.line.compact")
-            }
-            .buttonStyle(.borderless)
-            .foregroundColor(appState.logProcessor.autoScroll ? .accentColor : .secondary)
-            .help("Auto-scroll \(appState.logProcessor.autoScroll ? "on" : "off")")
-
-            // Copy all logs
-            Button(action: { copyAllLogs() }) {
-                Image(systemName: "doc.on.doc")
-            }
-            .buttonStyle(.borderless)
-            .help("Copy all logs")
-            .disabled(appState.logProcessor.entries.isEmpty)
-
-            // Clear logs
-            Button(action: { appState.clearLogs() }) {
-                Image(systemName: "trash")
-            }
-            .buttonStyle(.borderless)
-            .help("Clear logs")
-
-            // Export logs
-            Button(action: { appState.exportLogs() }) {
-                Image(systemName: "square.and.arrow.up")
-            }
-            .buttonStyle(.borderless)
-            .help("Export logs")
-        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
     }
 
     private func copyAllLogs() {
-        let allText = appState.logProcessor.filteredEntries
+        let text = appState.logProcessor.filteredEntries
             .map { $0.message }
             .joined(separator: "\n")
-
         NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(allText, forType: .string)
+        NSPasteboard.general.setString(text, forType: .string)
     }
 }
 
-struct Badge: View {
+struct ToolbarButton: View {
+    let icon: String
+    var isActive: Bool = false
+    var help: String = ""
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 11))
+        }
+        .buttonStyle(.plain)
+        .foregroundColor(isActive ? .accentColor : .secondary)
+        .frame(width: 24, height: 20)
+        .help(help)
+    }
+}
+
+struct CountBadge: View {
     let count: Int
     let color: Color
 
     var body: some View {
         Text("\(count)")
-            .font(.caption2)
-            .fontWeight(.medium)
+            .font(.system(size: 9, weight: .semibold))
             .foregroundColor(.white)
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
@@ -144,13 +152,12 @@ struct Badge: View {
     }
 }
 
-// MARK: - Log List
+// MARK: - Log Content
 
-struct LogListView: View {
+struct LogContentView: View {
     @EnvironmentObject var appState: AppState
     let searchText: String
 
-    /// Whether the log list is empty (considering filters)
     private var isEmpty: Bool {
         appState.logProcessor.filteredEntries.isEmpty
     }
@@ -158,7 +165,7 @@ struct LogListView: View {
     var body: some View {
         Group {
             if isEmpty {
-                EmptyLogView()
+                EmptyLogState()
             } else {
                 SelectableLogTextView(
                     entries: appState.logProcessor.filteredEntries,
@@ -171,7 +178,7 @@ struct LogListView: View {
     }
 }
 
-// MARK: - Selectable Log Text View (NSViewRepresentable)
+// MARK: - Selectable Log Text View
 
 struct SelectableLogTextView: NSViewRepresentable {
     let entries: [LogEntry]
@@ -185,12 +192,15 @@ struct SelectableLogTextView: NSViewRepresentable {
         textView.isSelectable = true
         textView.backgroundColor = NSColor.textBackgroundColor
         textView.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
-        textView.textContainerInset = NSSize(width: 8, height: 8)
+        textView.textContainerInset = NSSize(width: 10, height: 8)
         textView.autoresizingMask = [.width]
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
         textView.textContainer?.widthTracksTextView = true
-        textView.textContainer?.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.containerSize = NSSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
 
         scrollView.documentView = textView
         scrollView.hasVerticalScroller = true
@@ -204,45 +214,42 @@ struct SelectableLogTextView: NSViewRepresentable {
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let textView = scrollView.documentView as? NSTextView else { return }
 
-        let attributedString = NSMutableAttributedString()
+        let attributed = NSMutableAttributedString()
 
         for (index, entry) in entries.enumerated() {
-            let color: NSColor
+            let dotColor: NSColor
             switch entry.level {
-            case .error:
-                color = NSColor.systemRed
-            case .warning:
-                color = NSColor.systemOrange
-            case .debug:
-                color = NSColor.systemGray
-            default:
-                color = NSColor.labelColor
+            case .error: dotColor = .systemRed
+            case .warning: dotColor = .systemOrange
+            case .debug: dotColor = .systemGray
+            default: dotColor = .labelColor
             }
 
-            let levelIndicator = "● "
-            let levelAttr = NSAttributedString(
-                string: levelIndicator,
+            // Level dot
+            let dot = NSAttributedString(
+                string: "● ",
                 attributes: [
-                    .foregroundColor: color,
-                    .font: NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+                    .foregroundColor: dotColor,
+                    .font: NSFont.monospacedSystemFont(ofSize: 9, weight: .regular)
                 ]
             )
 
-            let messageAttr = NSAttributedString(
+            // Message
+            let textColor: NSColor = entry.level == .error ? .systemRed : .labelColor
+            let message = NSAttributedString(
                 string: entry.message + (index < entries.count - 1 ? "\n" : ""),
                 attributes: [
-                    .foregroundColor: entry.level == .error ? NSColor.systemRed : NSColor.labelColor,
+                    .foregroundColor: textColor,
                     .font: NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
                 ]
             )
 
-            attributedString.append(levelAttr)
-            attributedString.append(messageAttr)
+            attributed.append(dot)
+            attributed.append(message)
         }
 
-        textView.textStorage?.setAttributedString(attributedString)
+        textView.textStorage?.setAttributedString(attributed)
 
-        // Auto-scroll to bottom
         if autoScroll && !entries.isEmpty {
             textView.scrollToEndOfDocument(nil)
         }
@@ -251,25 +258,37 @@ struct SelectableLogTextView: NSViewRepresentable {
 
 // MARK: - Empty State
 
-struct EmptyLogView: View {
+struct EmptyLogState: View {
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             Image(systemName: "text.alignleft")
-                .font(.largeTitle)
+                .font(.system(size: 28))
+                .foregroundColor(.secondary.opacity(0.5))
+
+            Text("No logs")
+                .font(.system(size: 12))
                 .foregroundColor(.secondary)
-            Text("No logs yet")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Text("Run your app to see logs here")
-                .font(.caption2)
+
+            Text("Run your app to see logs")
+                .font(.system(size: 10))
                 .foregroundColor(.secondary.opacity(0.7))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
+// Keep Badge for backward compatibility
+struct Badge: View {
+    let count: Int
+    let color: Color
+
+    var body: some View {
+        CountBadge(count: count, color: color)
+    }
+}
+
 #Preview {
     LogViewerView()
         .environmentObject(AppState())
-        .frame(width: 320, height: 300)
+        .frame(width: 400, height: 300)
 }

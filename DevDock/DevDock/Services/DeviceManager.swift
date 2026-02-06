@@ -17,6 +17,15 @@ final class DeviceManager: ObservableObject, DeviceManagerProtocol {
     @Published private(set) var isRefreshing: Bool = false
     @Published private(set) var lastError: Error?
 
+    /// Available Android emulators (AVDs) that can be launched
+    @Published private(set) var availableAVDs: [String] = []
+
+    /// Available iOS simulators (including shutdown ones)
+    @Published private(set) var availableIOSSimulators: [Device] = []
+
+    /// Currently launching emulator name
+    @Published var launchingEmulator: String?
+
     // MARK: - Public Methods
 
     /// Refresh all device lists
@@ -27,11 +36,92 @@ final class DeviceManager: ObservableObject, DeviceManagerProtocol {
         // Fetch both platforms in parallel
         async let androidTask: () = refreshAndroidDevices()
         async let iosTask: () = refreshIOSSimulators()
+        async let avdTask: () = refreshAvailableAVDs()
 
         await androidTask
         await iosTask
+        await avdTask
 
         isRefreshing = false
+    }
+
+    /// Refresh available Android AVDs
+    private func refreshAvailableAVDs() async {
+        do {
+            let emulatorPath = getEmulatorPath()
+            let output = try await CommandRunner.execute(emulatorPath, arguments: ["-list-avds"])
+            availableAVDs = output
+                .components(separatedBy: .newlines)
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+        } catch {
+            availableAVDs = []
+        }
+    }
+
+    /// Get emulator path from ANDROID_HOME or default location
+    private func getEmulatorPath() -> String {
+        if let androidHome = ProcessInfo.processInfo.environment["ANDROID_HOME"] {
+            return "\(androidHome)/emulator/emulator"
+        }
+        // Default location on macOS
+        return "\(NSHomeDirectory())/Library/Android/sdk/emulator/emulator"
+    }
+
+    /// Launch an Android emulator by AVD name
+    func launchAndroidEmulator(_ avdName: String) async {
+        launchingEmulator = avdName
+
+        let emulatorPath = getEmulatorPath()
+
+        // Launch emulator in background (don't wait for it)
+        Task.detached {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: emulatorPath)
+            process.arguments = ["-avd", avdName]
+            process.standardOutput = FileHandle.nullDevice
+            process.standardError = FileHandle.nullDevice
+
+            try? process.run()
+        }
+
+        // Wait a bit for emulator to start appearing
+        try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+
+        // Start polling for the device
+        for _ in 0..<30 { // Max 30 attempts (60 seconds)
+            await refreshAndroidDevices()
+            if androidDevices.contains(where: { $0.state == .connected }) {
+                break
+            }
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+        }
+
+        await MainActor.run {
+            launchingEmulator = nil
+        }
+    }
+
+    /// Boot an iOS simulator and open Simulator app
+    func launchIOSSimulator(_ device: Device) async {
+        guard device.platform == .iOS else { return }
+
+        launchingEmulator = device.name
+
+        do {
+            // Boot the simulator
+            _ = try await CommandRunner.execute("xcrun", arguments: ["simctl", "boot", device.id])
+
+            // Open Simulator app
+            _ = try await CommandRunner.execute("open", arguments: ["-a", "Simulator"])
+
+            // Refresh to get updated state
+            await refreshIOSSimulators()
+        } catch {
+            // Simulator might already be booted
+        }
+
+        launchingEmulator = nil
     }
 
     /// Get devices for a specific platform
@@ -127,9 +217,12 @@ final class DeviceManager: ObservableObject, DeviceManagerProtocol {
                 "xcrun",
                 arguments: ["simctl", "list", "devices", "--json"]
             )
-            iosSimulators = parseSimctlOutput(output)
+            let (booted, all) = parseSimctlOutput(output)
+            iosSimulators = booted
+            availableIOSSimulators = all
         } catch {
             iosSimulators = []
+            availableIOSSimulators = []
             if case ProcessError.commandNotFound = error {
                 // Xcode not installed
             } else {
@@ -139,15 +232,16 @@ final class DeviceManager: ObservableObject, DeviceManagerProtocol {
     }
 
     /// Parse JSON output from `xcrun simctl list devices --json`
-    private func parseSimctlOutput(_ output: String) -> [Device] {
-        var devices: [Device] = []
+    /// Returns (booted devices, all available devices)
+    private func parseSimctlOutput(_ output: String) -> ([Device], [Device]) {
+        var allDevices: [Device] = []
 
-        guard let data = output.data(using: .utf8) else { return devices }
+        guard let data = output.data(using: .utf8) else { return ([], []) }
 
         do {
             let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
             guard let devicesDict = json?["devices"] as? [String: [[String: Any]]] else {
-                return devices
+                return ([], [])
             }
 
             for (runtime, deviceList) in devicesDict {
@@ -186,7 +280,7 @@ final class DeviceManager: ObservableObject, DeviceManagerProtocol {
                         type: .emulator,
                         state: state
                     )
-                    devices.append(device)
+                    allDevices.append(device)
                 }
             }
         } catch {
@@ -194,7 +288,7 @@ final class DeviceManager: ObservableObject, DeviceManagerProtocol {
         }
 
         // Sort: booted first, then by name
-        return devices.sorted { d1, d2 in
+        let sorted = allDevices.sorted { d1, d2 in
             if d1.state == .connected && d2.state != .connected {
                 return true
             }
@@ -203,6 +297,11 @@ final class DeviceManager: ObservableObject, DeviceManagerProtocol {
             }
             return d1.name < d2.name
         }
+
+        // Booted only
+        let booted = sorted.filter { $0.state == .connected }
+
+        return (booted, sorted)
     }
 
     /// Extract iOS version from runtime string
