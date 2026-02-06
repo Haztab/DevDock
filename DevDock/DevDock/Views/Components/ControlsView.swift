@@ -195,12 +195,39 @@ struct ActionButtonsView: View {
     @EnvironmentObject var appState: AppState
     @State private var isRunPressed = false
     @State private var isStopPressed = false
+    @State private var isUninstalling = false
 
     var body: some View {
         VStack(spacing: 8) {
-            // Main run/stop button with animation
-            mainActionButton
-                .animation(.snappy, value: appState.commandRunner.state.isRunning)
+            // Main run/stop button row with uninstall
+            HStack(spacing: 8) {
+                // Run or Stop button
+                mainActionButton
+                    .animation(.snappy, value: appState.commandRunner.state.isRunning)
+
+                // Uninstall button (visible when project and device selected)
+                if appState.currentProject != nil && appState.selectedDevice != nil {
+                    Button(action: {
+                        Task {
+                            isUninstalling = true
+                            await appState.uninstallApp()
+                            isUninstalling = false
+                        }
+                    }) {
+                        if isUninstalling {
+                            ProgressView()
+                                .scaleEffect(0.6)
+                                .frame(width: 16, height: 16)
+                        } else {
+                            Image(systemName: "trash")
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.orange)
+                    .disabled(isUninstalling)
+                    .help("Uninstall app from device")
+                }
+            }
 
             // Hot reload buttons (Flutter only) with slide animation
             if appState.canHotReload {

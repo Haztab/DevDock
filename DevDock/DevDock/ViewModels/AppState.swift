@@ -287,6 +287,82 @@ final class AppState: ObservableObject {
         }
     }
 
+    /// Uninstall the app from the selected device
+    func uninstallApp() async {
+        guard let project = currentProject,
+              let device = selectedDevice else {
+            showAlert("Please select a project and device")
+            return
+        }
+
+        logProcessor.addSystemMessage("Uninstalling app from \(device.name)...")
+
+        do {
+            let packageName = try getPackageName(for: project)
+
+            switch selectedPlatform {
+            case .android:
+                _ = try await CommandRunner.execute(
+                    "adb",
+                    arguments: ["-s", device.id, "uninstall", packageName]
+                )
+            case .iOS:
+                _ = try await CommandRunner.execute(
+                    "xcrun",
+                    arguments: ["simctl", "uninstall", device.id, packageName]
+                )
+            }
+
+            logProcessor.addSystemMessage("App uninstalled successfully")
+        } catch {
+            logProcessor.addSystemMessage("Uninstall failed: \(error.localizedDescription)")
+            showAlert(error.localizedDescription)
+        }
+    }
+
+    /// Get package/bundle ID from project files
+    private func getPackageName(for project: Project) throws -> String {
+        // Try to read from Android build.gradle (works for Flutter, React Native, Android)
+        let buildGradlePath = project.path.appendingPathComponent("android/app/build.gradle")
+        if let content = try? String(contentsOf: buildGradlePath, encoding: .utf8) {
+            // Look for applicationId line
+            for line in content.components(separatedBy: .newlines) {
+                let trimmed = line.trimmingCharacters(in: CharacterSet.whitespaces)
+                if trimmed.contains("applicationId") {
+                    // Extract the package name from quotes
+                    if let startQuote = trimmed.firstIndex(of: "\"") ?? trimmed.firstIndex(of: "'") {
+                        let afterQuote = trimmed.index(after: startQuote)
+                        if let endQuote = trimmed[afterQuote...].firstIndex(of: "\"") ?? trimmed[afterQuote...].firstIndex(of: "'") {
+                            let packageId = String(trimmed[afterQuote..<endQuote])
+                            if !packageId.isEmpty {
+                                return packageId
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fallback for Flutter: try pubspec.yaml name
+        if project.type == .flutter {
+            let pubspecPath = project.path.appendingPathComponent("pubspec.yaml")
+            if let content = try? String(contentsOf: pubspecPath, encoding: .utf8) {
+                for line in content.components(separatedBy: .newlines) {
+                    let trimmed = line.trimmingCharacters(in: CharacterSet.whitespaces)
+                    if trimmed.hasPrefix("name:") {
+                        let name = trimmed.replacingOccurrences(of: "name:", with: "")
+                            .trimmingCharacters(in: CharacterSet.whitespaces)
+                        if !name.isEmpty {
+                            return "com.example.\(name)"
+                        }
+                    }
+                }
+            }
+        }
+
+        throw ProcessError.executionFailed("Could not determine package name")
+    }
+
     // MARK: - Makefile Actions
 
     /// Execute a Makefile target
