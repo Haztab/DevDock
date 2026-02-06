@@ -328,6 +328,7 @@ final class AppState: ObservableObject {
 
     func clearLogs() {
         logProcessor.clearLogs()
+        objectWillChange.send()
     }
 
     func exportLogs() {

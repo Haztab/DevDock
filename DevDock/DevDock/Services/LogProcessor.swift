@@ -72,6 +72,7 @@ final class LogProcessor: ObservableObject {
     /// Clear all log entries
     func clearLogs() {
         entries.removeAll()
+        objectWillChange.send()
     }
 
     /// Export logs to a file
