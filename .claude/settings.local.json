@@ -10,7 +10,15 @@
       "Bash(sudo xcode-select:*)",
       "Bash(xcodebuild:*)",
       "Bash(find:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(/Users/qushay/Library/Android/sdk/platform-tools/adb devices -l)",
+      "Bash(pkill:*)",
+      "Bash(swift -e:*)",
+      "Bash(timeout 5:*)",
+      "Bash(log show:*)",
+      "Bash(pgrep:*)",
+      "Bash(# Check if the debug dylib contains our debug string strings /Users/qushay/Library/Developer/Xcode/DerivedData/DevDock-bhwkbahptkypvehjjnmdmeuudrob/Build/Products/Debug/DevDock.app/Contents/MacOS/DevDock.debug.dylib)",
+      "Bash(# Check for recent crash reports ls -lt ~/Library/Logs/DiagnosticReports/*DevDock*)"
     ]
   }
 }

@@ -376,12 +376,15 @@ final class CommandRunner: ObservableObject, CommandRunnerProtocol {
 
     private func findExecutablePath(_ executable: String) async throws -> String {
         // Common paths to search
+        let homeDir = NSHomeDirectory()
         let searchPaths = [
             "/usr/local/bin/\(executable)",
             "/opt/homebrew/bin/\(executable)",
             "/usr/bin/\(executable)",
-            "\(NSHomeDirectory())/.pub-cache/bin/\(executable)",
-            "\(NSHomeDirectory())/fvm/default/bin/\(executable)"
+            "\(homeDir)/.pub-cache/bin/\(executable)",
+            "\(homeDir)/fvm/default/bin/\(executable)",
+            "\(homeDir)/Library/Android/sdk/platform-tools/\(executable)",
+            "\(homeDir)/Android/sdk/platform-tools/\(executable)"
         ]
 
         // Check direct paths first
@@ -467,10 +470,13 @@ extension CommandRunner {
         let process = Process()
 
         // Try to find executable
+        let homeDir = NSHomeDirectory()
         let paths = [
             "/usr/local/bin/\(executable)",
             "/opt/homebrew/bin/\(executable)",
             "/usr/bin/\(executable)",
+            "\(homeDir)/Library/Android/sdk/platform-tools/\(executable)",
+            "\(homeDir)/Android/sdk/platform-tools/\(executable)",
             executable // Try as-is (might be full path)
         ]
 
@@ -482,16 +488,38 @@ extension CommandRunner {
             }
         }
 
-        guard let path = executablePath else {
+        guard let foundPath = executablePath else {
             throw ProcessError.commandNotFound(executable)
         }
 
-        process.executableURL = URL(fileURLWithPath: path)
+        process.executableURL = URL(fileURLWithPath: foundPath)
         process.arguments = arguments
 
         if let workingDirectory = workingDirectory {
             process.currentDirectoryURL = workingDirectory
         }
+
+        // Set up environment with common paths
+        var environment = ProcessInfo.processInfo.environment
+        let additionalPaths = [
+            "/usr/local/bin",
+            "/opt/homebrew/bin",
+            "\(homeDir)/Library/Android/sdk/platform-tools",
+            "\(homeDir)/Android/sdk/platform-tools",
+            "\(homeDir)/.pub-cache/bin",
+            "\(homeDir)/fvm/default/bin"
+        ]
+        if let existingPath = environment["PATH"] {
+            environment["PATH"] = additionalPaths.joined(separator: ":") + ":" + existingPath
+        }
+        // Set ANDROID_HOME if not set
+        if environment["ANDROID_HOME"] == nil {
+            let androidHome = "\(homeDir)/Library/Android/sdk"
+            if FileManager.default.fileExists(atPath: androidHome) {
+                environment["ANDROID_HOME"] = androidHome
+            }
+        }
+        process.environment = environment
 
         let pipe = Pipe()
         process.standardOutput = pipe

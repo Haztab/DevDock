@@ -30,6 +30,9 @@ struct ContentView: View {
         } message: {
             Text(appState.alertMessage)
         }
+        .task {
+            await appState.refreshDevices()
+        }
     }
 
     /// Adaptive main content based on current state

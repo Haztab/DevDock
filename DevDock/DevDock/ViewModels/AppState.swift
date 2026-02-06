@@ -92,6 +92,10 @@ final class AppState: ObservableObject {
     /// Whether log viewer window is visible
     @Published var isLogViewerVisible: Bool = false
 
+    // MARK: - Private
+
+    private var cancellables = Set<AnyCancellable>()
+
     // MARK: - Computed Properties
 
     /// Current process execution state (idle, running, etc.)
@@ -134,6 +138,22 @@ final class AppState: ObservableObject {
 
         // Connect log processor to command runner
         logProcessor.subscribe(to: commandRunner)
+
+        // Forward device manager changes to trigger UI updates
+        deviceManager.objectWillChange
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
+
+        // Forward command runner changes to trigger UI updates
+        commandRunner.objectWillChange
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
 
         // Load recent projects
         recentProjects = ProjectDetector.getRecentProjects()
@@ -186,11 +206,22 @@ final class AppState: ObservableObject {
     // MARK: - Device Actions
 
     func refreshDevices() async {
+        try? "AppState.refreshDevices called\n".append(toFile: "/tmp/devdock_trace.txt")
         await deviceManager.refreshDevices()
+        try? "deviceManager.refreshDevices done, devices: \(availableDevices.count)\n".append(toFile: "/tmp/devdock_trace.txt")
         // Re-select device if current one is no longer available
         if let current = selectedDevice,
            !availableDevices.contains(where: { $0.id == current.id }) {
             selectedDevice = availableDevices.first
+        }
+    }
+
+    private func appendToTrace(_ text: String) {
+        let path = "/tmp/devdock_trace.txt"
+        if let handle = FileHandle(forWritingAtPath: path) {
+            handle.seekToEndOfFile()
+            handle.write(text.data(using: .utf8)!)
+            handle.closeFile()
         }
     }
 
@@ -311,5 +342,18 @@ final class AppState: ObservableObject {
     private func showAlert(_ message: String) {
         alertMessage = message
         showingAlert = true
+    }
+}
+
+// Debug helper
+extension String {
+    func append(toFile path: String) throws {
+        if let handle = FileHandle(forWritingAtPath: path) {
+            handle.seekToEndOfFile()
+            handle.write(self.data(using: .utf8)!)
+            handle.closeFile()
+        } else {
+            try self.write(toFile: path, atomically: true, encoding: .utf8)
+        }
     }
 }
