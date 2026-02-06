@@ -86,8 +86,8 @@ final class AppState: ObservableObject {
     /// Currently running Makefile target (nil if none running)
     @Published var runningMakeTarget: MakefileTarget?
 
-    /// Whether to show Make Commands section (hidden by default)
-    @Published var showMakeCommands: Bool = false
+    /// Whether to show Make Commands section (shown by default)
+    @Published var showMakeCommands: Bool = true
 
     /// Whether log viewer window is visible
     @Published var isLogViewerVisible: Bool = false
