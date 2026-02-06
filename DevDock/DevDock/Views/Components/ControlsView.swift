@@ -95,10 +95,14 @@ struct DeviceRow: View {
         appState.deviceManager.launchingEmulator != nil
     }
 
+    private var emulatorButtonTitle: String {
+        appState.selectedPlatform == .android ? "Start Emulator" : "Start Simulator"
+    }
+
     var body: some View {
         VStack(spacing: 6) {
+            // Device picker row
             HStack(spacing: 6) {
-                // Device picker
                 Picker("", selection: $appState.selectedDevice) {
                     if hasNoDevices {
                         Text("No devices")
@@ -114,18 +118,6 @@ struct DeviceRow: View {
                 .frame(maxWidth: .infinity)
                 .disabled(hasNoDevices)
 
-                // Launch emulator
-                if hasAvailableEmulators {
-                    IconButton(
-                        icon: isLaunching ? nil : "play.circle",
-                        isLoading: isLaunching,
-                        action: { showEmulatorPicker.toggle() }
-                    )
-                    .popover(isPresented: $showEmulatorPicker, arrowEdge: .bottom) {
-                        EmulatorPicker(onSelect: { showEmulatorPicker = false })
-                    }
-                }
-
                 // Refresh
                 IconButton(
                     icon: isRefreshing ? nil : "arrow.clockwise",
@@ -140,13 +132,39 @@ struct DeviceRow: View {
                 )
             }
 
-            // Launching status
+            // Emulator launch button - prominent when no devices
+            if hasAvailableEmulators {
+                Button(action: { showEmulatorPicker.toggle() }) {
+                    HStack(spacing: 6) {
+                        if isLaunching {
+                            ProgressView()
+                                .scaleEffect(0.5)
+                                .frame(width: 12, height: 12)
+                        } else {
+                            Image(systemName: "play.circle.fill")
+                                .font(.system(size: 11))
+                        }
+                        Text(isLaunching ? "Starting..." : emulatorButtonTitle)
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                }
+                .buttonStyle(.bordered)
+                .tint(hasNoDevices ? .accentColor : .secondary)
+                .disabled(isLaunching)
+                .popover(isPresented: $showEmulatorPicker, arrowEdge: .bottom) {
+                    EmulatorPicker(onSelect: { showEmulatorPicker = false })
+                }
+            }
+
+            // Launching status with emulator name
             if let name = appState.deviceManager.launchingEmulator {
                 HStack(spacing: 4) {
                     ProgressView()
                         .scaleEffect(0.4)
                         .frame(width: 10, height: 10)
-                    Text("Starting \(name)...")
+                    Text("Booting \(name)...")
                         .font(.system(size: 10))
                         .foregroundColor(.secondary)
                     Spacer()
