@@ -46,7 +46,7 @@ struct DevDockApp: App {
                 .keyboardShortcut("d", modifiers: [.command, .shift])
             }
 
-            CommandMenu("View") {
+            CommandMenu("Window") {
                 Button("Toggle Log Viewer") {
                     NotificationCenter.default.post(name: .toggleLogViewerAction, object: nil)
                 }
@@ -56,6 +56,13 @@ struct DevDockApp: App {
                     NotificationCenter.default.post(name: .toggleMakeCommandsAction, object: nil)
                 }
                 .keyboardShortcut("m", modifiers: .command)
+
+                Divider()
+
+                Button("Always on Top") {
+                    NotificationCenter.default.post(name: .toggleFloatingAction, object: nil)
+                }
+                .keyboardShortcut("t", modifiers: [.command, .option])
             }
 
             CommandMenu("Logs") {
@@ -89,7 +96,21 @@ struct DevDockApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
 
+    /// Key for storing floating preference
+    private let floatingPreferenceKey = "DevDock.alwaysOnTop"
+
+    /// Whether window should float on top
+    var isFloating: Bool {
+        get { UserDefaults.standard.bool(forKey: floatingPreferenceKey) }
+        set { UserDefaults.standard.set(newValue, forKey: floatingPreferenceKey) }
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Set default value for floating (true by default)
+        if UserDefaults.standard.object(forKey: floatingPreferenceKey) == nil {
+            UserDefaults.standard.set(true, forKey: floatingPreferenceKey)
+        }
+
         // Configure main window
         if let window = NSApplication.shared.windows.first {
             configureWindow(window)
@@ -97,6 +118,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Setup menu bar item (optional)
         setupStatusBarItem()
+
+        // Listen for toggle floating action
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(toggleFloating),
+            name: .toggleFloatingAction,
+            object: nil
+        )
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -104,8 +133,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureWindow(_ window: NSWindow) {
-        // Floating panel behavior
-        window.level = .floating
+        // Set floating based on preference
+        updateWindowLevel(window)
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
         // Visual appearance
@@ -114,13 +143,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
 
-        // Remove standard window buttons
+        // Show standard window buttons (including minimize)
         window.standardWindowButton(.closeButton)?.isHidden = false
-        window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+        window.standardWindowButton(.miniaturizeButton)?.isHidden = false
         window.standardWindowButton(.zoomButton)?.isHidden = true
 
         // Position on left side of screen
         positionWindowOnLeft(window)
+    }
+
+    private func updateWindowLevel(_ window: NSWindow) {
+        window.level = isFloating ? .floating : .normal
+    }
+
+    @objc private func toggleFloating() {
+        isFloating.toggle()
+
+        // Update all windows
+        for window in NSApplication.shared.windows {
+            updateWindowLevel(window)
+        }
     }
 
     private func positionWindowOnLeft(_ window: NSWindow) {
@@ -140,13 +182,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         if let button = statusItem?.button {
             button.image = NSImage(systemSymbolName: "iphone.and.arrow.forward", accessibilityDescription: "DevDock")
-            button.action = #selector(toggleWindow)
+            button.action = #selector(statusBarClicked)
             button.target = self
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        }
+    }
+
+    @objc private func statusBarClicked(_ sender: NSStatusBarButton) {
+        guard let event = NSApp.currentEvent else { return }
+
+        if event.type == .rightMouseUp {
+            // Show context menu on right click
+            let menu = NSMenu()
+            menu.addItem(NSMenuItem(title: isFloating ? "Disable Always on Top" : "Enable Always on Top",
+                                    action: #selector(toggleFloating), keyEquivalent: ""))
+            menu.addItem(NSMenuItem.separator())
+            menu.addItem(NSMenuItem(title: "Quit DevDock", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+
+            statusItem?.menu = menu
+            statusItem?.button?.performClick(nil)
+            statusItem?.menu = nil
+        } else {
+            // Toggle window on left click
+            toggleWindow()
         }
     }
 
     @objc private func toggleWindow() {
-        if let window = NSApplication.shared.windows.first {
+        if let window = NSApplication.shared.windows.first(where: { $0.title != "DevDock Logs" }) {
             if window.isVisible {
                 window.orderOut(nil)
             } else {
@@ -170,4 +233,5 @@ extension Notification.Name {
     static let toggleAutoScrollAction = Notification.Name("toggleAutoScrollAction")
     static let toggleLogViewerAction = Notification.Name("toggleLogViewerAction")
     static let toggleMakeCommandsAction = Notification.Name("toggleMakeCommandsAction")
+    static let toggleFloatingAction = Notification.Name("toggleFloatingAction")
 }
