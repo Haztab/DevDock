@@ -96,6 +96,9 @@ final class AppState: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
+    /// Track previous error count for auto-opening log viewer
+    private var previousErrorCount: Int = 0
+
     // MARK: - Computed Properties
 
     /// Current process execution state (idle, running, etc.)
@@ -148,18 +151,34 @@ final class AppState: ObservableObject {
             .store(in: &cancellables)
 
         // Forward command runner changes to trigger UI updates
+        // Also auto-open log viewer when process fails
         commandRunner.objectWillChange
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                self?.objectWillChange.send()
+                guard let self = self else { return }
+                self.objectWillChange.send()
+
+                // Auto-open log viewer when process fails
+                if case .failed = self.commandRunner.state {
+                    self.autoOpenLogViewerForError()
+                }
             }
             .store(in: &cancellables)
 
         // Forward log processor changes to trigger UI updates
+        // Also auto-open log viewer when new errors are detected
         logProcessor.objectWillChange
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                self?.objectWillChange.send()
+                guard let self = self else { return }
+                self.objectWillChange.send()
+
+                // Check if error count increased - auto open log viewer
+                let currentErrorCount = self.logProcessor.errorCount
+                if currentErrorCount > self.previousErrorCount {
+                    self.autoOpenLogViewerForError()
+                }
+                self.previousErrorCount = currentErrorCount
             }
             .store(in: &cancellables)
 
@@ -398,6 +417,11 @@ final class AppState: ObservableObject {
 
     func toggleLogViewer() {
         isLogViewerVisible.toggle()
+    }
+
+    /// Auto-open log viewer when an error is detected
+    func autoOpenLogViewerForError() {
+        LogViewerWindowController.shared.showWindow(appState: self)
     }
 
     // MARK: - Log Actions
