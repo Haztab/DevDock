@@ -155,6 +155,14 @@ final class AppState: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // Forward log processor changes to trigger UI updates
+        logProcessor.objectWillChange
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
+
         // Load recent projects
         recentProjects = ProjectDetector.getRecentProjects()
 

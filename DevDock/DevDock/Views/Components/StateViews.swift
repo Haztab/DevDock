@@ -230,8 +230,21 @@ struct ErrorBannerView: View {
                 .font(.caption)
                 .foregroundColor(.primary)
                 .lineLimit(2)
+                .textSelection(.enabled)
 
             Spacer()
+
+            // Copy button
+            Button(action: {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(message, forType: .string)
+            }) {
+                Image(systemName: "doc.on.doc")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .buttonStyle(.plain)
+            .help("Copy error message")
 
             Button(action: onDismiss) {
                 Image(systemName: "xmark")

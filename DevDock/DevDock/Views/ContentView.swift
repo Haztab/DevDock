@@ -26,6 +26,10 @@ struct ContentView: View {
         .environmentObject(appState)
         .handleMenuActions(appState: appState)
         .alert("Error", isPresented: $appState.showingAlert) {
+            Button("Copy") {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(appState.alertMessage, forType: .string)
+            }
             Button("OK") { }
         } message: {
             Text(appState.alertMessage)
@@ -91,6 +95,14 @@ struct LogViewerToolbar: View {
                 .foregroundColor(.secondary)
 
             Spacer()
+
+            // Clear logs button
+            Button(action: { appState.clearLogs() }) {
+                Image(systemName: "trash")
+                    .font(.caption)
+            }
+            .buttonStyle(.borderless)
+            .help("Clear Logs (Cmd+K)")
 
             // Open log viewer button
             Button(action: { openLogViewerWindow() }) {

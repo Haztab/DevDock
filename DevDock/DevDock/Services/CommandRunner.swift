@@ -321,12 +321,40 @@ final class CommandRunner: ObservableObject, CommandRunnerProtocol {
 
         // Set up environment (inherit current + add common paths)
         var environment = ProcessInfo.processInfo.environment
+        let homeDir = NSHomeDirectory()
+
+        // Set JAVA_HOME if not set
+        if environment["JAVA_HOME"] == nil {
+            let javaPaths = [
+                "/opt/homebrew/opt/openjdk@17",
+                "/opt/homebrew/opt/openjdk",
+                "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+                "/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
+            ]
+            for javaPath in javaPaths {
+                if FileManager.default.fileExists(atPath: javaPath) {
+                    environment["JAVA_HOME"] = javaPath
+                    break
+                }
+            }
+        }
+
+        // Set ANDROID_HOME if not set
+        if environment["ANDROID_HOME"] == nil {
+            let androidHome = "\(homeDir)/Library/Android/sdk"
+            if FileManager.default.fileExists(atPath: androidHome) {
+                environment["ANDROID_HOME"] = androidHome
+            }
+        }
+
         let additionalPaths = [
             "/usr/local/bin",
             "/opt/homebrew/bin",
-            "\(NSHomeDirectory())/.pub-cache/bin",
-            "\(NSHomeDirectory())/fvm/default/bin",
-            "\(NSHomeDirectory())/.nvm/versions/node/*/bin"
+            "/opt/homebrew/opt/openjdk@17/bin",
+            "\(homeDir)/Library/Android/sdk/platform-tools",
+            "\(homeDir)/.pub-cache/bin",
+            "\(homeDir)/fvm/default/bin",
+            "\(homeDir)/.nvm/versions/node/*/bin"
         ]
         if let existingPath = environment["PATH"] {
             environment["PATH"] = additionalPaths.joined(separator: ":") + ":" + existingPath
@@ -501,9 +529,27 @@ extension CommandRunner {
 
         // Set up environment with common paths
         var environment = ProcessInfo.processInfo.environment
+
+        // Set JAVA_HOME if not set
+        if environment["JAVA_HOME"] == nil {
+            let javaPaths = [
+                "/opt/homebrew/opt/openjdk@17",
+                "/opt/homebrew/opt/openjdk",
+                "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home",
+                "/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
+            ]
+            for javaPath in javaPaths {
+                if FileManager.default.fileExists(atPath: javaPath) {
+                    environment["JAVA_HOME"] = javaPath
+                    break
+                }
+            }
+        }
+
         let additionalPaths = [
             "/usr/local/bin",
             "/opt/homebrew/bin",
+            "/opt/homebrew/opt/openjdk@17/bin",
             "\(homeDir)/Library/Android/sdk/platform-tools",
             "\(homeDir)/Android/sdk/platform-tools",
             "\(homeDir)/.pub-cache/bin",
@@ -512,6 +558,7 @@ extension CommandRunner {
         if let existingPath = environment["PATH"] {
             environment["PATH"] = additionalPaths.joined(separator: ":") + ":" + existingPath
         }
+
         // Set ANDROID_HOME if not set
         if environment["ANDROID_HOME"] == nil {
             let androidHome = "\(homeDir)/Library/Android/sdk"
