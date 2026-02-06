@@ -96,8 +96,16 @@ final class ProjectDetector {
             defer { url.stopAccessingSecurityScopedResource() }
 
             let type = detectProjectType(at: url)
-            return Project(path: url, type: type)
+            let makefileTargets = MakefileParser.parseTargets(at: url)
+            return Project(path: url, type: type, makefileTargets: makefileTargets)
         }
+    }
+
+    /// Create a Project from a URL, detecting type and Makefile targets
+    static func createProject(at url: URL) -> Project {
+        let type = detectProjectType(at: url)
+        let makefileTargets = MakefileParser.parseTargets(at: url)
+        return Project(path: url, type: type, makefileTargets: makefileTargets)
     }
 
     /// Save a project to recent list

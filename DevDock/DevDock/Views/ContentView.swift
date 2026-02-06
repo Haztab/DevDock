@@ -6,8 +6,8 @@ import SwiftUI
 ///
 /// Displays different states based on app state:
 /// - No project selected: Shows `NoProjectSelectedView`
-/// - Project selected: Shows full controls and log viewer
-/// - Error state: Shows error banner with retry option
+/// - Project selected: Shows compact controls
+/// - Log viewer opens in separate window
 struct ContentView: View {
     @StateObject private var appState = AppState()
 
@@ -21,7 +21,7 @@ struct ContentView: View {
             // Main content area - adapts based on state
             mainContent
         }
-        .frame(width: 320, minHeight: 400, maxHeight: 700)
+        .frame(width: 280)
         .background(Color(NSColor.windowBackgroundColor))
         .environmentObject(appState)
         .handleMenuActions(appState: appState)
@@ -38,14 +38,12 @@ struct ContentView: View {
         if appState.currentProject == nil {
             // No project selected - show onboarding
             NoProjectSelectedView()
-                .transition(.opacity.combined(with: .scale(scale: 0.98)))
+                .transition(.opacity)
         } else {
-            // Project selected - show full UI
+            // Project selected - show compact UI
             VStack(spacing: 0) {
                 // Controls section
                 ControlsView()
-
-                Divider()
 
                 // Error banner if process failed
                 if case .failed(let error) = appState.processState {
@@ -56,21 +54,127 @@ struct ContentView: View {
                         }
                     )
                     .padding(8)
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .transition(.move(edge: .top))
                 }
 
-                // Log viewer
-                LogViewerView()
+                Divider()
+
+                // Toolbar for log viewer window
+                LogViewerToolbar()
             }
-            .transition(.opacity.combined(with: .scale(scale: 0.98)))
+            .transition(.opacity)
         }
+    }
+}
+
+// MARK: - Log Viewer Toolbar
+
+/// Toolbar to open log viewer in separate window
+struct LogViewerToolbar: View {
+    @EnvironmentObject var appState: AppState
+
+    var body: some View {
+        HStack(spacing: 8) {
+            // Log count badges
+            if appState.logProcessor.errorCount > 0 {
+                Badge(count: appState.logProcessor.errorCount, color: .red)
+            }
+            if appState.logProcessor.warningCount > 0 {
+                Badge(count: appState.logProcessor.warningCount, color: .orange)
+            }
+
+            Text("\(appState.logProcessor.entries.count) logs")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            Spacer()
+
+            // Open log viewer button
+            Button(action: { openLogViewerWindow() }) {
+                Label("Logs", systemImage: "text.alignleft")
+                    .font(.caption)
+            }
+            .buttonStyle(.bordered)
+            .help("Open Log Viewer (Cmd+L)")
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+    }
+
+    private func openLogViewerWindow() {
+        LogViewerWindowController.shared.showWindow(appState: appState)
+    }
+}
+
+// MARK: - Log Viewer Window Controller
+
+class LogViewerWindowController {
+    static let shared = LogViewerWindowController()
+
+    private var window: NSWindow?
+    private var hostingController: NSHostingController<AnyView>?
+
+    func showWindow(appState: AppState) {
+        if let existingWindow = window, existingWindow.isVisible {
+            existingWindow.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        let logViewerContent = LogViewerWindowContent()
+            .environmentObject(appState)
+
+        let hostingController = NSHostingController(rootView: AnyView(logViewerContent))
+        self.hostingController = hostingController
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 400),
+            styleMask: [.titled, .closable, .resizable, .miniaturizable],
+            backing: .buffered,
+            defer: false
+        )
+
+        window.title = "DevDock Logs"
+        window.contentViewController = hostingController
+        window.isReleasedWhenClosed = false
+        window.level = .floating
+        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+
+        // Position to the right of main window
+        if let mainWindow = NSApplication.shared.windows.first(where: { $0.title != "DevDock Logs" }) {
+            let mainFrame = mainWindow.frame
+            let logX = mainFrame.maxX + 20
+            let logY = mainFrame.midY - 200
+            window.setFrameOrigin(NSPoint(x: logX, y: logY))
+        } else {
+            window.center()
+        }
+
+        self.window = window
+        window.makeKeyAndOrderFront(nil)
+    }
+
+    func closeWindow() {
+        window?.close()
+    }
+}
+
+// MARK: - Log Viewer Window Content
+
+struct LogViewerWindowContent: View {
+    @EnvironmentObject var appState: AppState
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LogViewerView()
+        }
+        .frame(minWidth: 400, minHeight: 300)
     }
 }
 
 extension ContentView {
     /// Animate content transitions
     private func withContentAnimation<T>(_ action: () -> T) -> T {
-        withAnimation(.gentle) {
+        withAnimation(.easeInOut(duration: 0.35)) {
             action()
         }
     }

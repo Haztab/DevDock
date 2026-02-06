@@ -7,24 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DD000001 /* DevDockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100001; };
-		DD000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100002; };
-		DD000003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100003; };
-		DD000004 /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100004; };
-		DD000005 /* LogViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100005; };
-		DD000006 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100006; };
-		DD000007 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100007; };
-		DD000008 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100008; };
-		DD000009 /* LogProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100009; };
-		DD000010 /* ProjectDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100010; };
-		DD000011 /* ProjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100011; };
-		DD000012 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100012; };
-		DD000013 /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100013; };
-		DD000014 /* ProcessState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100014; };
-		DD000015 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100015; };
-		DD000016 /* View+KeyboardShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100016; };
-		DD000017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD100017; };
+		DD000001 /* DevDockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100001 /* DevDockApp.swift */; };
+		DD000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100002 /* ContentView.swift */; };
+		DD000003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100003 /* SettingsView.swift */; };
+		DD000004 /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100004 /* ControlsView.swift */; };
+		DD000005 /* LogViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100005 /* LogViewerView.swift */; };
+		DD000006 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100006 /* AppState.swift */; };
+		DD000007 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100007 /* CommandRunner.swift */; };
+		DD000008 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100008 /* DeviceManager.swift */; };
+		DD000009 /* LogProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100009 /* LogProcessor.swift */; };
+		DD000010 /* ProjectDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100010 /* ProjectDetector.swift */; };
+		DD000011 /* ProjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100011 /* ProjectType.swift */; };
+		DD000012 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100012 /* Device.swift */; };
+		DD000013 /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100013 /* LogEntry.swift */; };
+		DD000014 /* ProcessState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100014 /* ProcessState.swift */; };
+		DD000015 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100015 /* Color+Extensions.swift */; };
+		DD000016 /* View+KeyboardShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100016 /* View+KeyboardShortcuts.swift */; };
+		DD000017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD100017 /* Assets.xcassets */; };
+		DD000018 /* StateViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100019 /* StateViews.swift */; };
+		DD000019 /* View+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100020 /* View+Animations.swift */; };
+		DD000020 /* MakefileTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100021 /* MakefileTarget.swift */; };
+		DD000021 /* MakefileParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100022 /* MakefileParser.swift */; };
+		DD000022 /* MakefileCommandsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD100023 /* MakefileCommandsView.swift */; };
+		DDT00001 /* ProjectDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDT10001 /* ProjectDetectorTests.swift */; };
+		DDT00002 /* LogProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDT10002 /* LogProcessorTests.swift */; };
+		DDT00003 /* CommandRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDT10003 /* CommandRunnerTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DDT20001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD800001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD500001;
+			remoteInfo = DevDock;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		DD100001 /* DevDockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevDockApp.swift; sourceTree = "<group>"; };
@@ -45,11 +63,28 @@
 		DD100016 /* View+KeyboardShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+KeyboardShortcuts.swift"; sourceTree = "<group>"; };
 		DD100017 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD100018 /* DevDock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DevDock.entitlements; sourceTree = "<group>"; };
+		DD100019 /* StateViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateViews.swift; sourceTree = "<group>"; };
+		DD100020 /* View+Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Animations.swift"; sourceTree = "<group>"; };
+		DD100021 /* MakefileTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakefileTarget.swift; sourceTree = "<group>"; };
+		DD100022 /* MakefileParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakefileParser.swift; sourceTree = "<group>"; };
+		DD100023 /* MakefileCommandsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakefileCommandsView.swift; sourceTree = "<group>"; };
 		DD200001 /* DevDock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevDock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDT10001 /* ProjectDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetectorTests.swift; sourceTree = "<group>"; };
+		DDT10002 /* LogProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogProcessorTests.swift; sourceTree = "<group>"; };
+		DDT10003 /* CommandRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandRunnerTests.swift; sourceTree = "<group>"; };
+		DDT10004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DDT20002 /* DevDockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DevDockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DD300001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDT30001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -63,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				DD400002 /* DevDock */,
+				DDT40001 /* DevDockTests */,
 				DD400010 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -97,6 +133,7 @@
 				DD100012 /* Device.swift */,
 				DD100013 /* LogEntry.swift */,
 				DD100014 /* ProcessState.swift */,
+				DD100021 /* MakefileTarget.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -108,6 +145,7 @@
 				DD100008 /* DeviceManager.swift */,
 				DD100009 /* LogProcessor.swift */,
 				DD100010 /* ProjectDetector.swift */,
+				DD100022 /* MakefileParser.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -135,6 +173,8 @@
 			children = (
 				DD100004 /* ControlsView.swift */,
 				DD100005 /* LogViewerView.swift */,
+				DD100019 /* StateViews.swift */,
+				DD100023 /* MakefileCommandsView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -144,6 +184,7 @@
 			children = (
 				DD100015 /* Color+Extensions.swift */,
 				DD100016 /* View+KeyboardShortcuts.swift */,
+				DD100020 /* View+Animations.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -152,8 +193,20 @@
 			isa = PBXGroup;
 			children = (
 				DD200001 /* DevDock.app */,
+				DDT20002 /* DevDockTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DDT40001 /* DevDockTests */ = {
+			isa = PBXGroup;
+			children = (
+				DDT10001 /* ProjectDetectorTests.swift */,
+				DDT10002 /* LogProcessorTests.swift */,
+				DDT10003 /* CommandRunnerTests.swift */,
+				DDT10004 /* Info.plist */,
+			);
+			path = DevDockTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,6 +229,24 @@
 			productReference = DD200001 /* DevDock.app */;
 			productType = "com.apple.product-type.application";
 		};
+		DDT50001 /* DevDockTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DDT70001 /* Build configuration list for PBXNativeTarget "DevDockTests" */;
+			buildPhases = (
+				DDT60001 /* Sources */,
+				DDT30001 /* Frameworks */,
+				DDT60002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DDT50002 /* PBXTargetDependency */,
+			);
+			name = DevDockTests;
+			productName = DevDockTests;
+			productReference = DDT20002 /* DevDockTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,10 +255,14 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					DD500001 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					DDT50001 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = DD500001;
 					};
 				};
 			};
@@ -205,6 +280,7 @@
 			projectRoot = "";
 			targets = (
 				DD500001 /* DevDock */,
+				DDT50001 /* DevDockTests */,
 			);
 		};
 /* End PBXProject section */
@@ -215,6 +291,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD000017 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDT60002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,10 +324,33 @@
 				DD000014 /* ProcessState.swift in Sources */,
 				DD000015 /* Color+Extensions.swift in Sources */,
 				DD000016 /* View+KeyboardShortcuts.swift in Sources */,
+				DD000018 /* StateViews.swift in Sources */,
+				DD000019 /* View+Animations.swift in Sources */,
+				DD000020 /* MakefileTarget.swift in Sources */,
+				DD000021 /* MakefileParser.swift in Sources */,
+				DD000022 /* MakefileCommandsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDT60001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DDT00001 /* ProjectDetectorTests.swift in Sources */,
+				DDT00002 /* LogProcessorTests.swift in Sources */,
+				DDT00003 /* CommandRunnerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DDT50002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD500001 /* DevDock */;
+			targetProxy = DDT20001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DD900001 /* Debug */ = {
@@ -281,6 +387,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -305,6 +412,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -344,6 +452,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -361,6 +470,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -374,8 +484,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DevDock;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -403,8 +517,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DevDock;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -420,6 +538,54 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		DDT90001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DevDockTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devdock.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DevDock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DevDock";
+			};
+			name = Debug;
+		};
+		DDT90002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DevDockTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devdock.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DevDock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DevDock";
 			};
 			name = Release;
 		};
@@ -440,6 +606,15 @@
 			buildConfigurations = (
 				DD900001 /* Debug */,
 				DD900002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DDT70001 /* Build configuration list for PBXNativeTarget "DevDockTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DDT90001 /* Debug */,
+				DDT90002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

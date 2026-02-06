@@ -223,6 +223,87 @@ final class CommandRunner: ObservableObject, CommandRunnerProtocol {
         outputSubject.send("[DevDock] Hot restart triggered")
     }
 
+    /// Run a simple command with streaming output (e.g., make commands)
+    /// This runs independently without affecting the main process state
+    func runSimpleCommand(
+        _ executable: String,
+        args: [String],
+        workingDirectory: URL
+    ) async throws {
+        let process = Process()
+
+        // Find executable path
+        let executablePath = try await findExecutablePath(executable)
+        process.executableURL = URL(fileURLWithPath: executablePath)
+        process.arguments = args
+        process.currentDirectoryURL = workingDirectory
+
+        // Set up environment
+        var environment = ProcessInfo.processInfo.environment
+        let additionalPaths = [
+            "/usr/local/bin",
+            "/opt/homebrew/bin",
+            "\(NSHomeDirectory())/.pub-cache/bin"
+        ]
+        if let existingPath = environment["PATH"] {
+            environment["PATH"] = additionalPaths.joined(separator: ":") + ":" + existingPath
+        }
+        process.environment = environment
+
+        // Set up pipes
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+
+        // Start reading output in background
+        let outputHandle = stdoutPipe.fileHandleForReading
+        let errorHandle = stderrPipe.fileHandleForReading
+
+        let readOutputTask = Task.detached { [weak self] in
+            while true {
+                let data = outputHandle.availableData
+                guard !data.isEmpty else { break }
+                if let output = String(data: data, encoding: .utf8) {
+                    let lines = output.components(separatedBy: .newlines)
+                    for line in lines where !line.isEmpty {
+                        await MainActor.run { [weak self] in
+                            self?.outputSubject.send(line)
+                        }
+                    }
+                }
+            }
+        }
+
+        let readErrorTask = Task.detached { [weak self] in
+            while true {
+                let data = errorHandle.availableData
+                guard !data.isEmpty else { break }
+                if let output = String(data: data, encoding: .utf8) {
+                    let lines = output.components(separatedBy: .newlines)
+                    for line in lines where !line.isEmpty {
+                        await MainActor.run { [weak self] in
+                            self?.errorSubject.send(line)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Run the process
+        try process.run()
+        process.waitUntilExit()
+
+        // Cancel reading tasks
+        readOutputTask.cancel()
+        readErrorTask.cancel()
+
+        // Check exit status
+        if process.terminationStatus != 0 {
+            throw ProcessError.executionFailed("Command exited with code \(process.terminationStatus)")
+        }
+    }
+
     // MARK: - Private Methods
 
     private func executeCommand(

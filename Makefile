@@ -1,7 +1,7 @@
 # DevDock Makefile
 # Common commands for building and managing the project
 
-.PHONY: all build debug release archive dmg clean open test version help
+.PHONY: all build debug release archive dmg installer clean open test version help
 
 # Default target
 all: build
@@ -28,6 +28,10 @@ dmg: archive
 # Full release build
 dist:
 	@./scripts/build.sh full
+
+# Create installer DMG (recommended)
+installer:
+	@./scripts/create-installer.sh
 
 # Clean build artifacts
 clean:
@@ -106,9 +110,8 @@ help:
 	@echo "Building:"
 	@echo "  make build      Build debug configuration"
 	@echo "  make release    Build release configuration"
-	@echo "  make archive    Create archive for distribution"
-	@echo "  make dmg        Create DMG installer"
-	@echo "  make dist       Full release build"
+	@echo "  make installer  Create DMG installer (recommended)"
+	@echo "  make dist       Full release build (legacy)"
 	@echo ""
 	@echo "Development:"
 	@echo "  make open       Open project in Xcode"

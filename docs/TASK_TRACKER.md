@@ -10,13 +10,13 @@
 
 | Metric | Value |
 |--------|-------|
-| **Overall Progress** | 96% |
+| **Overall Progress** | 98% |
 | **Current Phase** | MVP Development |
 | **Sprint** | Sprint 1 - Core Features |
 | **Blockers** | None |
 
 ```
-Progress: ███████████████████░ 96%
+Progress: ████████████████████ 98%
 ```
 
 ---
@@ -28,7 +28,7 @@ Progress: ███████████████████░ 96%
 | Phase 1 | Project Setup & Architecture | ✅ Complete | 100% |
 | Phase 2 | Core Services Implementation | ✅ Complete | 100% |
 | Phase 3 | UI Implementation | ✅ Complete | 100% |
-| Phase 4 | Integration & Testing | 🔄 In Progress | 40% |
+| Phase 4 | Integration & Testing | 🔄 In Progress | 63% |
 | Phase 5 | Polish & Documentation | ✅ Complete | 100% |
 | Phase 6 | Release Preparation | 🔄 In Progress | 75% |
 
@@ -119,15 +119,20 @@ Progress: ███████████████████░ 96%
 | P4-007 | Test hot reload functionality | - | ⬜ Todo | - |
 | P4-008 | Test log filtering | - | ⬜ Todo | - |
 | P4-009 | Test process cleanup | - | ⬜ Todo | - |
-| P4-010 | Write unit tests for ProjectDetector | - | ⬜ Todo | - |
-| P4-011 | Write unit tests for LogProcessor | - | ⬜ Todo | - |
-| P4-012 | Write unit tests for CommandRunner | - | ⬜ Todo | - |
+| P4-010 | Write unit tests for ProjectDetector | - | ✅ Done | 2026-02-06 |
+| P4-011 | Write unit tests for LogProcessor | - | ✅ Done | 2026-02-06 |
+| P4-012 | Write unit tests for CommandRunner | - | ✅ Done | 2026-02-06 |
 | P4-013 | Fix any integration bugs | - | ⬜ Todo | - |
 
 **Phase 4 Notes:**
 - Xcode project created with proper configuration
 - Components wired up via EnvironmentObject
-- Testing with real projects pending
+- DevDockTests test target added to project
+- Unit tests created for:
+  - ProjectDetector (17 test cases)
+  - LogProcessor (25 test cases)
+  - CommandRunner (22 test cases)
+- Manual testing with real projects pending
 
 ---
 
@@ -202,13 +207,13 @@ Progress: ███████████████████░ 96%
 
 | Day | Tasks Completed | Notes |
 |-----|-----------------|-------|
-| Day 1 (2026-02-06) | P1-001 to P1-005, P2-001 to P2-014, P3-001 to P3-015, P5-001 to P5-010, P4-001, P4-002, P6-001 to P6-004, P6-007 | Full implementation + Release prep |
+| Day 1 (2026-02-06) | P1-001 to P1-005, P2-001 to P2-014, P3-001 to P3-015, P5-001 to P5-010, P4-001, P4-002, P4-010 to P4-012, P6-001 to P6-004, P6-007 | Full implementation + Unit Tests + Release prep |
 | Day 2 | - | - |
 | Day 3 | - | - |
 | Day 4 | - | - |
 | Day 5 | - | - |
 
-**Sprint Velocity:** 52 tasks completed / Day 1
+**Sprint Velocity:** 55 tasks completed / Day 1
 
 ---
 
@@ -274,6 +279,22 @@ A task is considered **Done** when:
 - Makefile with common commands
 - CHANGELOG.md with version history
 - RELEASE_NOTES.md for GitHub release
+
+**Unit Tests (P4-010 to P4-012):**
+- DevDockTests target added to Xcode project
+- ProjectDetectorTests.swift (17 test cases):
+  - Flutter, React Native, Android, iOS detection
+  - Priority order tests
+  - Edge cases (empty dirs, non-existent paths)
+- LogProcessorTests.swift (25 test cases):
+  - Log level detection (error, warning, debug, info)
+  - Android logcat format parsing
+  - Filter by level and search text
+  - Max entries limit, export functionality
+- CommandRunnerTests.swift (22 test cases):
+  - ProcessState tests (isRunning, canStart, statusText)
+  - ProcessError tests (error descriptions, equality)
+  - RunConfiguration tests (Flutter, React Native, Android, iOS commands)
 
 **Fixed:**
 - N/A

@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(xcodebuild test:*)",
+      "Bash(./scripts/build.sh:*)",
+      "Bash(./scripts/create-installer.sh:*)",
+      "Bash(ls:*)",
+      "Bash(xcode-select:*)",
+      "Bash(sudo xcode-select:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(find:*)",
+      "Bash(open:*)"
     ]
   }
 }

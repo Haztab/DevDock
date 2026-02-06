@@ -32,11 +32,18 @@ struct Project: Identifiable, Hashable {
     let path: URL
     let name: String
     let type: ProjectType
+    let makefileTargets: [MakefileTarget]
 
-    init(path: URL, type: ProjectType) {
+    /// Whether this project has a Makefile with targets
+    var hasMakefile: Bool {
+        !makefileTargets.isEmpty
+    }
+
+    init(path: URL, type: ProjectType, makefileTargets: [MakefileTarget] = []) {
         self.id = UUID()
         self.path = path
         self.name = path.lastPathComponent
         self.type = type
+        self.makefileTargets = makefileTargets
     }
 }

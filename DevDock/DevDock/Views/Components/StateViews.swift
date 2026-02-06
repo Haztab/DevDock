@@ -166,7 +166,7 @@ struct EmptyLogsView: View {
 
             Text("Run your app to see logs here")
                 .font(.caption)
-                .foregroundColor(.tertiary)
+                .foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()

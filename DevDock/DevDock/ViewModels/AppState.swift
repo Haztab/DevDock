@@ -83,6 +83,15 @@ final class AppState: ObservableObject {
     /// Message to display in error alert
     @Published var alertMessage: String = ""
 
+    /// Currently running Makefile target (nil if none running)
+    @Published var runningMakeTarget: MakefileTarget?
+
+    /// Whether to show Make Commands section (hidden by default)
+    @Published var showMakeCommands: Bool = false
+
+    /// Whether log viewer window is visible
+    @Published var isLogViewerVisible: Bool = false
+
     // MARK: - Computed Properties
 
     /// Current process execution state (idle, running, etc.)
@@ -164,8 +173,7 @@ final class AppState: ObservableObject {
         panel.allowsMultipleSelection = false
 
         if panel.runModal() == .OK, let url = panel.url {
-            let type = ProjectDetector.detectProjectType(at: url)
-            let project = Project(path: url, type: type)
+            let project = ProjectDetector.createProject(at: url)
             selectProject(project)
         }
     }
@@ -238,6 +246,43 @@ final class AppState: ObservableObject {
         } catch {
             showAlert(error.localizedDescription)
         }
+    }
+
+    // MARK: - Makefile Actions
+
+    /// Execute a Makefile target
+    func runMakeTarget(_ target: MakefileTarget) async {
+        guard let project = currentProject else {
+            showAlert("No project selected")
+            return
+        }
+
+        runningMakeTarget = target
+        logProcessor.addSystemMessage("Running 'make \(target.name)'...")
+
+        do {
+            try await commandRunner.runSimpleCommand(
+                "make",
+                args: [target.name],
+                workingDirectory: project.path
+            )
+            logProcessor.addSystemMessage("'make \(target.name)' completed")
+        } catch {
+            logProcessor.addSystemMessage("'make \(target.name)' failed: \(error.localizedDescription)")
+            showAlert(error.localizedDescription)
+        }
+
+        runningMakeTarget = nil
+    }
+
+    // MARK: - View Toggle Actions
+
+    func toggleMakeCommands() {
+        showMakeCommands.toggle()
+    }
+
+    func toggleLogViewer() {
+        isLogViewerVisible.toggle()
     }
 
     // MARK: - Log Actions

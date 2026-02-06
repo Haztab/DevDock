@@ -28,5 +28,11 @@ extension View {
             .onReceive(NotificationCenter.default.publisher(for: .toggleAutoScrollAction)) { _ in
                 appState.logProcessor.autoScroll.toggle()
             }
+            .onReceive(NotificationCenter.default.publisher(for: .toggleLogViewerAction)) { _ in
+                LogViewerWindowController.shared.showWindow(appState: appState)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .toggleMakeCommandsAction)) { _ in
+                appState.toggleMakeCommands()
+            }
     }
 }

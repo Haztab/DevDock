@@ -10,7 +10,7 @@ struct DevDockApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
-        .defaultPosition(.trailing)
+        .defaultPosition(.leading)
         .commands {
             // Custom menu commands
             CommandGroup(replacing: .newItem) { }
@@ -44,6 +44,18 @@ struct DevDockApp: App {
                     NotificationCenter.default.post(name: .refreshDevicesAction, object: nil)
                 }
                 .keyboardShortcut("d", modifiers: [.command, .shift])
+            }
+
+            CommandMenu("View") {
+                Button("Toggle Log Viewer") {
+                    NotificationCenter.default.post(name: .toggleLogViewerAction, object: nil)
+                }
+                .keyboardShortcut("l", modifiers: .command)
+
+                Button("Toggle Make Commands") {
+                    NotificationCenter.default.post(name: .toggleMakeCommandsAction, object: nil)
+                }
+                .keyboardShortcut("m", modifiers: .command)
             }
 
             CommandMenu("Logs") {
@@ -107,17 +119,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
 
-        // Position on right side of screen
-        positionWindowOnRight(window)
+        // Position on left side of screen
+        positionWindowOnLeft(window)
     }
 
-    private func positionWindowOnRight(_ window: NSWindow) {
+    private func positionWindowOnLeft(_ window: NSWindow) {
         guard let screen = NSScreen.main else { return }
 
         let screenFrame = screen.visibleFrame
         let windowFrame = window.frame
 
-        let newOriginX = screenFrame.maxX - windowFrame.width - 20
+        let newOriginX = screenFrame.minX + 20
         let newOriginY = screenFrame.midY - (windowFrame.height / 2)
 
         window.setFrameOrigin(NSPoint(x: newOriginX, y: newOriginY))
@@ -156,4 +168,6 @@ extension Notification.Name {
     static let clearLogsAction = Notification.Name("clearLogsAction")
     static let exportLogsAction = Notification.Name("exportLogsAction")
     static let toggleAutoScrollAction = Notification.Name("toggleAutoScrollAction")
+    static let toggleLogViewerAction = Notification.Name("toggleLogViewerAction")
+    static let toggleMakeCommandsAction = Notification.Name("toggleMakeCommandsAction")
 }

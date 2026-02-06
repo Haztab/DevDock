@@ -14,6 +14,41 @@ struct ControlsView: View {
 
             // Action buttons
             ActionButtonsView()
+
+            // Makefile commands (if project has Makefile)
+            if let project = appState.currentProject, project.hasMakefile {
+                Divider()
+
+                // Collapsible section header
+                Button(action: { appState.toggleMakeCommands() }) {
+                    HStack {
+                        Image(systemName: appState.showMakeCommands ? "chevron.down" : "chevron.right")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        Image(systemName: "terminal")
+                            .font(.caption)
+                        Text("Make Commands")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                        Spacer()
+                        Text("\(project.makefileTargets.count)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.secondary.opacity(0.2))
+                            .cornerRadius(4)
+                    }
+                    .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+
+                // Collapsible content
+                if appState.showMakeCommands {
+                    MakefileCommandsView()
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
         }
         .padding(12)
     }
@@ -248,7 +283,7 @@ struct HotReloadButton: View {
         .scaleEffect(isPressed ? 0.94 : (isHovered ? 1.02 : 1.0))
         .help(help)
         .onHover { hovering in
-            withAnimation(.quick) { isHovered = hovering }
+            withAnimation(.easeOut(duration: 0.15)) { isHovered = hovering }
         }
         .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
             withAnimation(.snappy) { isPressed = pressing }

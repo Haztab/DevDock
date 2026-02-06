@@ -23,11 +23,12 @@ struct LogViewerView: View {
 struct LogToolbar: View {
     @EnvironmentObject var appState: AppState
     @Binding var searchText: String
+    @State private var selectedLevel: LogLevel = .all
 
     var body: some View {
         HStack(spacing: 8) {
             // Filter picker
-            Picker("Level", selection: $appState.logProcessor.filter.level) {
+            Picker("Level", selection: $selectedLevel) {
                 ForEach(LogLevel.allCases) { level in
                     Label(level.rawValue, systemImage: level.iconName)
                         .tag(level)
@@ -35,6 +36,9 @@ struct LogToolbar: View {
             }
             .labelsHidden()
             .frame(width: 90)
+            .onChange(of: selectedLevel) { _, newValue in
+                appState.logProcessor.filter.level = newValue
+            }
 
             // Search field
             HStack {
@@ -138,7 +142,7 @@ struct LogListView: View {
         Group {
             if isEmpty {
                 // Empty state
-                EmptyLogsView()
+                EmptyLogView()
             } else {
                 // Log entries
                 logScrollView
