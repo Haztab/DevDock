@@ -22,7 +22,10 @@
       "Bash(/usr/libexec/java_home:*)",
       "Bash(sudo ln:*)",
       "Bash(/Users/qushay/Library/Android/sdk/emulator/emulator -list-avds:*)",
-      "Bash(/Users/qushay/Project/DevDock/DevDock/Scripts/create-dmg.sh:*)"
+      "Bash(/Users/qushay/Project/DevDock/DevDock/Scripts/create-dmg.sh:*)",
+      "Bash(bash:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: Update Claude settings and rebuild DMG installer\n\nAdd bash permission to allowed tools and update the distribution DMG.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
