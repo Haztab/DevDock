@@ -1,7 +1,8 @@
 # DevDock Makefile
 # Common commands for building and managing the project
 
-.PHONY: all build debug release archive dmg installer clean open test version help
+.PHONY: all build debug release archive dmg installer clean open test version help \
+       brew-update brew-release
 
 # Default target
 all: build
@@ -103,6 +104,21 @@ setup:
 		echo "Homebrew not installed"; \
 	fi
 
+# Update Homebrew cask from local build
+brew-update: installer
+	@./scripts/update-homebrew.sh
+
+# Full Homebrew release: bump version, build, tag, and push
+brew-release: installer
+	@VERSION=$$(./scripts/version.sh get | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'); \
+	./scripts/update-homebrew.sh; \
+	echo ""; \
+	echo "Cask updated for v$$VERSION."; \
+	echo "To publish the release:"; \
+	echo "  git add -A && git commit -m 'release: v$$VERSION'"; \
+	echo "  git tag v$$VERSION"; \
+	echo "  git push origin main --tags"
+
 # Show help
 help:
 	@echo "DevDock Build Commands"
@@ -125,6 +141,10 @@ help:
 	@echo "  make bump-patch Bump patch version (1.0.0 -> 1.0.1)"
 	@echo "  make bump-minor Bump minor version (1.0.0 -> 1.1.0)"
 	@echo "  make bump-major Bump major version (1.0.0 -> 2.0.0)"
+	@echo ""
+	@echo "Homebrew:"
+	@echo "  make brew-update  Update Homebrew cask from local build"
+	@echo "  make brew-release Build installer and prepare Homebrew release"
 	@echo ""
 	@echo "Other:"
 	@echo "  make setup      Install development dependencies"

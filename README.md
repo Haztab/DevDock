@@ -76,20 +76,38 @@ DevDock is a minimal floating panel that lets you **run, stop, and hot-reload** 
 
 ## Installation
 
+### Homebrew (Recommended)
+
+```bash
+# Add the DevDock tap
+brew tap Haztab/DevDock https://github.com/Haztab/DevDock.git
+
+# Install DevDock
+brew install --cask devdock
+```
+
+To update:
+
+```bash
+brew upgrade --cask devdock
+```
+
 ### Download
 
-Download the latest release from [Releases](https://github.com/yourorg/devdock/releases).
+Download the latest DMG from [Releases](https://github.com/Haztab/DevDock/releases).
 
 ### Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourorg/devdock.git
-cd devdock/DevDock
+git clone https://github.com/Haztab/DevDock.git
+cd DevDock
 
-# Open in Xcode
-open DevDock.xcodeproj
+# Build DMG installer
+make installer
 
+# Or open in Xcode
+make open
 # Build and run (⌘R)
 ```
 
