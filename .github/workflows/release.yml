@@ -1,0 +1,117 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release archive
+        run: |
+          xcodebuild \
+            -project DevDock/DevDock.xcodeproj \
+            -scheme DevDock \
+            -configuration Release \
+            -archivePath build/DevDock.xcarchive \
+            archive
+
+      - name: Export app from archive
+        run: |
+          mkdir -p build/export
+
+          cat > build/ExportOptions.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>mac-application</string>
+              <key>signingStyle</key>
+              <string>automatic</string>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild \
+            -exportArchive \
+            -archivePath build/DevDock.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist build/ExportOptions.plist \
+            2>&1 || true
+
+          # Fallback: copy from archive directly if export fails
+          if [ ! -d "build/export/DevDock.app" ]; then
+            cp -R "build/DevDock.xcarchive/Products/Applications/DevDock.app" build/export/
+          fi
+
+      - name: Create DMG
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          STAGING="build/dmg-staging"
+
+          mkdir -p "$STAGING"
+          cp -R build/export/DevDock.app "$STAGING/"
+          ln -s /Applications "$STAGING/Applications"
+
+          hdiutil create \
+            -volname "DevDock" \
+            -srcfolder "$STAGING" \
+            -ov \
+            -format UDZO \
+            "build/DevDock-${VERSION}.dmg"
+
+      - name: Compute SHA256
+        id: sha
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA=$(shasum -a 256 "build/DevDock-${VERSION}.dmg" | awk '{print $1}')
+          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
+          echo "SHA256: $SHA"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: DevDock v${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: build/DevDock-${{ steps.version.outputs.version }}.dmg
+
+      - name: Update Cask formula
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA="${{ steps.sha.outputs.sha256 }}"
+
+          # Update version
+          sed -i '' "s/version \".*\"/version \"${VERSION}\"/" Casks/devdock.rb
+          # Update SHA256
+          sed -i '' "s/sha256 \".*\"/sha256 \"${SHA}\"/" Casks/devdock.rb
+
+          echo "Updated Casks/devdock.rb:"
+          cat Casks/devdock.rb
+
+      - name: Commit updated Cask
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main || git checkout master
+          git add Casks/devdock.rb
+          git diff --cached --quiet || git commit -m "chore: update Homebrew cask to v${{ steps.version.outputs.version }}"
+          git push
